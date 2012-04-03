@@ -15,4 +15,9 @@ fi
 echo "Compiling the kernel"
 make -j2
 
+echo "Tarballing the kernel"
+cp arch/arm/boot/zImage ./
+tar cvf $KBUILD_BUILD_VERSION-zImage.tar zImage
+rm zImage
+
 echo "Done"
