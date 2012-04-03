@@ -521,7 +521,6 @@ service netd /system/bin/netd
 
 service debuggerd /system/bin/debuggerd
 
-service efs-daemon /system/bin/efsd30
 
 service ril-daemon /system/bin/rild
     socket rild stream 660 root radio
@@ -551,11 +550,6 @@ service media /system/bin/mediaserver
 service killmediaserver /system/bin/killmediaserver
     user media
     group system
-    oneshot
-
-service bootsound /system/bin/playmp3
-    user media
-    group audio
     oneshot
 
 service postinit /sbin/post-init.sh
@@ -659,9 +653,6 @@ service pbap /system/bin/sdptool add --channel=19 PBAP
 service installd /system/bin/installd
     socket installd stream 600 system system
 
-service flash_recovery /system/etc/install-recovery.sh
-    oneshot
-
 service racoon /system/bin/racoon
     socket racoon stream 600 system system
     # racoon will setuid to vpn after getting necessary resources.
@@ -693,12 +684,3 @@ on property:init.svc.wpa_supplicant=stopped
 on property:init.svc.dhcpcd=stopped
 #    dhcpcd -k eth0
 # end of wifi
-
-# for MobileAP
-service mobileAP /system/bin/wlp2pservice
-
-chmod 555 /system/etc/mobileap/enable_pdp.sh
-chmod 555 /system/etc/mobileap/enable_eth.sh
-chmod 555 /system/etc/mobileap/initialize_nat.sh
-chmod 555 /system/etc/mobileap/tethering_enable.sh
-# end of mobileAP

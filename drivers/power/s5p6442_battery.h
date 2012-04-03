@@ -18,18 +18,6 @@
  */
 #define VOLTAGE_CAL		(0)	// temp calibration value
 #define BATT_CAL			(2115 + VOLTAGE_CAL)	/* 3.65V */
-#if 0  // Not used.
-#define BATT_MAXIMUM		735		/* 4.20V */
-#define BATT_FULL			605		/* 4.10V */
-#define BATT_SAFE_RECHARGE	605		/* 4.10V */
-#define BATT_ALMOST_FULL	485		/* 4.01V */
-#define BATT_HIGH			255		/* 3.84V */
-#define BATT_MED			135		/* 3.75V */
-#define BATT_LOW			80		/* 3.71V */
-#define BATT_CRITICAL		0		/* 3.65V */ 
-#define BATT_MINIMUM		(-80)	/* 3.59V */
-#define BATT_OFF			(-335)	/* 3.40V */
-#endif
 #define BATT_MAXIMUM		605		/* 4.119V */
 #define BATT_FULL			460		/* 4.021V */
 #define BATT_SAFE_RECHARGE	460		/* 4.021V */
@@ -39,7 +27,7 @@
 #define BATT_LOW			(1)		/* 3.680V */
 #define BATT_CRITICAL		(-74)	/* 3.624V */ 
 #define BATT_MINIMUM		(-114)	/* 3.601V */
-#define BATT_OFF			(-356)	/* 3.385V */
+#define BATT_OFF			(-150)	/* 3.385V */
 
 
 /*
