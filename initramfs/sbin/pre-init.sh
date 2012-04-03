@@ -418,6 +418,11 @@ echo "STL7 :" $STL7_FS
 echo "STL8 :" $STL8_FS
 echo "MMC : " $MMC_FS
 
+sed -i "s|SYSTEM_FS|$STL6_FS|" /misc/recovery.fstab
+sed -i "s|DATA_FS|$STL7_FS|" /misc/recovery.fstab
+sed -i "s|CACHE_FS|$STL8_FS|" /misc/recovery.fstab
+sed -i "s|SDEXT_FS|$MMC_FS|" /misc/recovery.fstab
+
 rm -rf /etc
 sync
 cd /

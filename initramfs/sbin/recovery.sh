@@ -5,5 +5,4 @@
 # Kyorakernel
 #
 
-mkdir /etc
 /sbin/recovery
