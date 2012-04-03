@@ -294,6 +294,21 @@ endif
 
 export quiet Q KBUILD_VERBOSE
 
+ifeq ($(V), 2)
+	QUIET_STDERR = ">/dev/null"
+else
+	QUIET_STDERR = ">/dev/null 2>&1"
+endif
+
+BITBUCKET = "/dev/null"
+
+ifneq ($(shell sh -c "(echo '\#include <stdio.h>'; echo 'int main(void) { return puts(\"hi\"); }') | $(CC) -x c - $(ALL_CFLAGS) -o $(BITBUCKET) "$(QUIET_STDERR)" && echo y"), y)
+	BITBUCKET = .perf.dev.null
+endif
+
+ifeq ($(shell sh -c "echo 'int foo(void) {char X[2]; return 3;}' | $(CC) -x c -c -Werror -fstack-protector-all - -o $(BITBUCKET) "$(QUIET_STDERR)" && echo y"), y)
+  CFLAGS := $(CFLAGS) -fstack-protector-all
+endif
 
 # Look for make include files relative to root of kernel src
 MAKEFLAGS += --include-dir=$(srctree)
@@ -331,6 +346,21 @@ CFLAGS_KERNEL	=
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
+ifeq ($(V), 2)
+	QUIET_STDERR = ">/dev/null"
+else
+	QUIET_STDERR = ">/dev/null 2>&1"
+endif
+
+BITBUCKET = "/dev/null"
+
+ifneq ($(shell sh -c "(echo '\#include <stdio.h>'; echo 'int main(void) { return puts(\"hi\"); }') | $(CC) -x c - $(ALL_CFLAGS) -o $(BITBUCKET) "$(QUIET_STDERR)" && echo y"), y)
+	BITBUCKET = .perf.dev.null
+endif
+
+ifeq ($(shell sh -c "echo 'int foo(void) {char X[2]; return 3;}' | $(CC) -x c -c -Werror -fstack-protector-all - -o $(BITBUCKET) "$(QUIET_STDERR)" && echo y"), y)
+  CFLAGS := $(CFLAGS) -fstack-protector-all
+endif
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
@@ -537,6 +567,12 @@ ifndef CONFIG_CC_STACKPROTECTOR
 KBUILD_CFLAGS += $(call cc-option, -fno-stack-protector)
 endif
 
+# This warning generated too much noise in a regular build.
+KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+
+# This warning generated too much noise in a regular build.
+KBUILD_CFLAGS += $(call cc-disable-warning, unused-but-set-variable)
+
 ifdef CONFIG_FRAME_POINTER
 KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
 else
@@ -565,7 +601,7 @@ CHECKFLAGS     += $(NOSTDINC_FLAGS)
 KBUILD_CFLAGS += $(call cc-option,-Wdeclaration-after-statement,)
 
 # disable pointer signed / unsigned warnings in gcc 4.0
-KBUILD_CFLAGS += $(call cc-option,-Wno-pointer-sign,)
+KBUILD_CFLAGS += $(call cc-disable-warning, pointer-sign)
 
 # disable invalid "can't wrap" optimizations for signed / pointers
 KBUILD_CFLAGS	+= $(call cc-option,-fno-strict-overflow)
