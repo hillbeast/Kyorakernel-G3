@@ -265,8 +265,8 @@ mkdir /system/bin
 echo "Build fs_current"
 build_fs_current
 
-insmod /rfs/rfs_glue.ko
-insmod /rfs/rfs_fat.ko
+insmod /lib/modules/rfs_glue.ko
+insmod /lib/modules/rfs_fat.ko
 
 echo "fsck filesystems"
 for DEVICE in stl7 stl8 stl6 mmcblk0p2 
@@ -623,6 +623,9 @@ rmdir /kyora_sd
 		sed -i "s|g3_wifi_data_07|# Line not needed for Samsung|" /init.rc
 		sed -i "s|g3_wifi_service|service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf|" /init.rc
 		sed -i "s|g3_vibrator_module|vibrator-sam|" /init.rc
+
+mkdir /system/bin
+ln -s /sbin/busybox /system/bin/sh
 
 exec /init.bin
 
