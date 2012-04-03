@@ -126,8 +126,6 @@ on boot
 ##
 service console /sbin/sh
     console
-    user shell
-    group log
 
 service recovery /sbin/recovery.sh
     console
