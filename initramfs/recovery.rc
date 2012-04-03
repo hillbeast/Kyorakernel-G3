@@ -127,7 +127,7 @@ on boot
 service console /sbin/sh
     console
 
-service recovery /sbin/recovery.sh
+service recovery /sbin/recovery
     console
     oneshot
 
