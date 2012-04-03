@@ -20,6 +20,7 @@
 #include <linux/mtd/onenand.h>
 #include <linux/mtd/partitions.h>
 #include <asm/io.h>
+#include "onenand_base.c"
 
 /*
  * Note: Driver name and platform data format have been updated!

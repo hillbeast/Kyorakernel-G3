@@ -28,6 +28,7 @@
 #include <linux/jiffies.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/onenand.h>
+#include <linux/mtd/onenand_regs.h>
 #include <linux/mtd/partitions.h>
 
 #include <asm/io.h>
