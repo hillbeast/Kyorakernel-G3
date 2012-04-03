@@ -441,12 +441,12 @@ if test -f $G3DIR/fs.data2sd; then
 	DATA2SDmode=`cat $G3DIR/fs.data2sd`
 	if [ "$DATA2SDmode" = "hybrid" ]
 	then	
-		echo "Data2SD Enabled - Hybrid Mode" >> /data2sd.log	
+		echo "Data2SD Enabled - Hybrid Mode" >> /tmp/data2sd.log	
 		echo "Data2SD Enabled - Hybrid Mode" >> /tmp/kernel.log
-		tr -d '\r' < /system/etc/data2sd.dirs > /data2sd.dirs
-		tr -d '\r' < $G3DIR/data2sd.dirs > /data2sd.dirs
+		tr -d '\r' < /system/etc/tmp/data2sd.dirs > /tmp/data2sd.dirs
+		tr -d '\r' < $G3DIR/tmp/data2sd.dirs > /tmp/data2sd.dirs
 	else
-		echo "Data2SD Enabled - Standard Mode" >> /data2sd.log	
+		echo "Data2SD Enabled - Standard Mode" >> /tmp/data2sd.log	
 		echo "Data2SD Enabled - Standard Mode" >> /tmp/kernel.log
 		umount /data
 		mount -t $MMC_FS -o nodiratime,nosuid,nodev,rw$MMC_MNT /dev/block/mmcblk0p2 /sdext
@@ -484,11 +484,11 @@ else
 fi
 
 
-echo "Cleaning up symlinks" >> /data2sd.log
+echo "Cleaning up symlinks" >> /tmp/data2sd.log
 cd /data/
 for x in *
 	do if [ -L $x ]; then
-		echo "- /data/$x is a symlink" >> /data2sd.log
+		echo "- /data/$x is a symlink" >> /tmp/data2sd.log
 		rm /data/$x
 		mkdir /data/$x
 		chmod 777 /data/$x
@@ -498,7 +498,7 @@ mkdir /data/dalvik-cache
 cd /data/dalvik-cache
 for x in *
 	do if [ -L $x ]; then
-		echo "- /data/$x is a symlink" >> /data2sd.log
+		echo "- /data/$x is a symlink" >> /tmp/data2sd.log
 		rm /data/$x
 		mkdir /data/$x
 		chmod 777 /data/$x
@@ -512,38 +512,38 @@ if [ "$MultiOS" != "" ]; then
 	fi
 
 	if [ "$MultiOS" != "$LastOS" ]; then
-		echo "System has changed! Multi-OS Data changing too..." >> /multidata.log
+		echo "System has changed! Multi-OS Data changing too..." >> /tmp/multidata.log
 		rm /sdext/multios/$LastOS.data.tar
 		rm /sdext/multios/$LastOS.dalvikcache.tar
 		rm /sdext/multios/$LastOS.android_secure.tar
 
 		if test -f $G3DIR/multiosdata.cache; then
-			echo "Backing up dalvik-cache ($MultiOSCompression)" >> /multidata.log
-			tar cvf$MultiOSCompression /sdext/multios/$LastOS.dalvikcache.tar /data/dalvik-cache 2>>/multidata.log
+			echo "Backing up dalvik-cache ($MultiOSCompression)" >> /tmp/multidata.log
+			tar cvf$MultiOSCompression /sdext/multios/$LastOS.dalvikcache.tar /data/dalvik-cache 2>>/tmp/multidata.log
 		fi
 		rm -r /data/dalvik-cache/*
 
-		echo "Backing up old data ($MultiOSCompression)" >> /multidata.log
-		tar cvf$MultiOSCompression /sdext/multios/$LastOS.data.tar /data 2>>/multidata.log 
+		echo "Backing up old data ($MultiOSCompression)" >> /tmp/multidata.log
+		tar cvf$MultiOSCompression /sdext/multios/$LastOS.data.tar /data 2>>/tmp/multidata.log 
 		rm -r /data/*
 
 		if test -d /kyora_sd/.android_secure; then
-			echo "Backing up old android_secure ($MultiOSCompression)" >> /multidata.log
-			tar cvf$MultiOSCompression /sdext/multios/$LastOS.android_secure.tar /kyora_sd/.android_secure 2>>/multidata.log 
+			echo "Backing up old android_secure ($MultiOSCompression)" >> /tmp/multidata.log
+			tar cvf$MultiOSCompression /sdext/multios/$LastOS.android_secure.tar /kyora_sd/.android_secure 2>>/tmp/multidata.log 
 		fi
 		rm -r /kyora_sd/.android_secure/*
 		
-		echo "Extracting new data ($MultiOSCompression)" >> /multidata.log
-		tar xvf$MultiOSCompression /sdext/multios/$MultiOS.data.tar 2>>/multidata.log
+		echo "Extracting new data ($MultiOSCompression)" >> /tmp/multidata.log
+		tar xvf$MultiOSCompression /sdext/multios/$MultiOS.data.tar 2>>/tmp/multidata.log
 		if test -f $G3DIR/multiosdata.cache; then
-			echo "Extracting new dalvik-cache ($MultiOSCompression)" >> /multidata.log
-			tar xvf$MultiOSCompression /sdext/multios/$MultiOS.dalvikcache.tar 2>>/multidata.log
+			echo "Extracting new dalvik-cache ($MultiOSCompression)" >> /tmp/multidata.log
+			tar xvf$MultiOSCompression /sdext/multios/$MultiOS.dalvikcache.tar 2>>/tmp/multidata.log
 		fi
 		if test -f /sdext/multios/$MultiOS.android_secure.tar; then
-			echo "Extracting new android_secure ($MultiOSCompression)" >> /multidata.log
-			tar xvf$MultiOSCompression /sdext/multios/$MultiOS.android_secure.tar 2>>/multidata.log 
+			echo "Extracting new android_secure ($MultiOSCompression)" >> /tmp/multidata.log
+			tar xvf$MultiOSCompression /sdext/multios/$MultiOS.android_secure.tar 2>>/tmp/multidata.log 
 		fi
-		echo "Data switched from $LastOS to $MultiOS" >> /multidata.log
+		echo "Data switched from $LastOS to $MultiOS" >> /tmp/multidata.log
 	fi		
 
 	echo $MultiOS > /sdext/lastos
@@ -551,9 +551,9 @@ fi
 # End of Multi Data
 
 # Hybrid Data2SD Enabler
-if test -f /data2sd.dirs; then
-	echo "Connecting Hybrid Data2SD Links" >> /data2sd.log
-	cat /data2sd.dirs | while read line
+if test -f /tmp/data2sd.dirs; then
+	echo "Connecting Hybrid Data2SD Links" >> /tmp/data2sd.log
+	cat /tmp/data2sd.dirs | while read line
 	do
 		DATA2SDtemp="$line"
 
@@ -562,22 +562,22 @@ if test -f /data2sd.dirs; then
 		mkdir /intdata/$DATA2SDtemp
 		rm -r /intdata/$DATA2SDtemp
 		ln -s /sdext/$DATA2SDtemp /intdata/$DATA2SDtemp
-		echo "- /data/$DATA2SDtemp linked to /sdext/$DATA2SDtemp" >> /data2sd.log
+		echo "- /data/$DATA2SDtemp linked to /sdext/$DATA2SDtemp" >> /tmp/data2sd.log
 		if [ "$line" == "dalvik-cache" ]; then
 			if test -f $G3DIR/hybrid.intsys; then
-				echo "Internalising dalvik-cache" >> /data2sd.log
+				echo "Internalising dalvik-cache" >> /tmp/data2sd.log
 				mkdir /intdata/dalvik-syscache
 				cd /data/dalvik-cache/
 				for x in system@*; do
 					if [ -L $x ]; then
-						echo "- /data/dalvik-cache/$x already internal" >> /data2sd.log
+						echo "- /data/dalvik-cache/$x already internal" >> /tmp/data2sd.log
 					else
 						mv $x /intdata/dalvik-syscache/
 						rm $x
 						ln -s /intdata/dalvik-syscache/$x $x
 						chmod 777 /intdata/dalvik-syscache/$x
 						chmod 777 $x
-						echo "- /data/dalvik-cache/$x internalised to /intdata/dalvik-syscache/$x" >> /data2sd.log
+						echo "- /data/dalvik-cache/$x internalised to /intdata/dalvik-syscache/$x" >> /tmp/data2sd.log
 					fi
 				done
 				cd /
@@ -588,10 +588,10 @@ if test -f /data2sd.dirs; then
 
 
 else
-	echo "No Data2SD config file found (/system/etc/data2sd.dirs or /sdcard/Android/data/kyorakernel/data2sd.dirs)" >> /data2sd.log
+	echo "No Data2SD config file found (/system/etc/tmp/data2sd.dirs or /sdcard/Android/data/kyorakernel/tmp/data2sd.dirs)" >> /tmp/data2sd.log
 fi
 
-rm /data2sd.dirs
+rm /tmp/data2sd.dirs
 rm /multios
 cd /
 # End of Hybrid Data2SD
@@ -617,17 +617,17 @@ sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime n
 sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/stl8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
 
 umount /kyora_sd
-rmdir /kyora_sd
+rm -rf /kyora_sd
 
-		sed -i "s|g3_wifi_data_01|mkdir /data/wifi 0777 wifi wifi|" /init.rc
-		sed -i "s|g3_wifi_data_02|mkdir /data/misc/wifi 0771 wifi wifi|" /init.rc
-		sed -i "s|g3_wifi_data_03|chmod 0777 /data/misc/wifi/|" /init.rc
-		sed -i "s|g3_wifi_data_04|# Line not needed for Samsung|" /init.rc
-		sed -i "s|g3_wifi_data_05|# Line not needed for Samsung|" /init.rc
-		sed -i "s|g3_wifi_data_06|# Line not needed for Samsung|" /init.rc
-		sed -i "s|g3_wifi_data_07|# Line not needed for Samsung|" /init.rc
-		sed -i "s|g3_wifi_service|service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf|" /init.rc
-		sed -i "s|g3_vibrator_module|vibrator-sam|" /init.rc
+sed -i "s|g3_wifi_data_01|mkdir /data/wifi 0777 wifi wifi|" /init.rc
+sed -i "s|g3_wifi_data_02|mkdir /data/misc/wifi 0771 wifi wifi|" /init.rc
+sed -i "s|g3_wifi_data_03|chmod 0777 /data/misc/wifi/|" /init.rc
+sed -i "s|g3_wifi_data_04|# Line not needed for Samsung|" /init.rc
+sed -i "s|g3_wifi_data_05|# Line not needed for Samsung|" /init.rc
+sed -i "s|g3_wifi_data_06|# Line not needed for Samsung|" /init.rc
+sed -i "s|g3_wifi_data_07|# Line not needed for Samsung|" /init.rc
+sed -i "s|g3_wifi_service|service wpa_supplicant /system/bin/wpa_supplicant -Dwext -ieth0 -c/data/wifi/bcm_supp.conf|" /init.rc
+sed -i "s|g3_vibrator_module|vibrator-sam|" /init.rc
 
 mkdir /system/bin
 ln -s /sbin/busybox /system/bin/sh
