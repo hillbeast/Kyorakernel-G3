@@ -474,7 +474,7 @@ on boot
 ## Daemon processes to be run by init.
 ##
 service console /system/bin/sh
-    user shell
+    user root
     group shell system log
     console
 
