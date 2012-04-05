@@ -2195,7 +2195,7 @@ static noinline struct module *load_module(void __user *umod,
 
 	modmagic = get_modinfo(sechdrs, infoindex, "vermagic");
 	/* This is allowed: modprobe --force will invalidate it. */
-	if (!modmagic) {
+	/*if (!modmagic) {
 		err = try_to_force_load(mod, "bad vermagic");
 		if (err)
 			goto free_hdr;
@@ -2204,7 +2204,7 @@ static noinline struct module *load_module(void __user *umod,
 		       mod->name, modmagic, vermagic);
 		err = -ENOEXEC;
 		goto free_hdr;
-	}
+	} */
 
 	staging = get_modinfo(sechdrs, infoindex, "staging");
 	if (staging) {
