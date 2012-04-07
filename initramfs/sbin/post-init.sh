@@ -13,6 +13,9 @@ exec 2>&1
 
 chmod 777 /sdext/app
 
+mount -t ext4 -o loop /sdext/cache.img /cache
+mount -t vfat -o loop,ro /sdext/efs.img /efs
+
 mkdir /system/sd
 mount -o bind /sdext /system/sd
 

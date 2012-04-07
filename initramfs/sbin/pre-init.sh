@@ -614,19 +614,9 @@ fi
 # Inline inject mountpoints
 
 mount -t ext4 /dev/block/mmcblk0p2 /sdext
-mknod /dev/loop0 b 7 0
-mknod /dev/loop1 b 7 1
-mknod /dev/loop2 b 7 2
-mknod /dev/loop3 b 7 3
 
-losetup /dev/loop0 /sdext/system.img
-losetup /dev/loop1 /sdext/data.img
-losetup /dev/loop2 /sdext/cache.img
-losetup /dev/loop3 /sdext/efs.img
-
-mount -t ext4 /dev/loop0 /system
-mount -t ext4 /dev/loop1 /data
-mount -t ext4 /dev/loop2 /cache
+mount -t ext4 -o loop,ro /sdext/system.img /system
+mount -t ext4 -o loop /sdext/data.img /data
 
 sed -i "s|g3_mount_stl6|# derp|" /init.rc
 sed -i "s|g3_mount_stl6|# derp|" /recovery.rc
