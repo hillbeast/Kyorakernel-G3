@@ -615,16 +615,11 @@ fi
 
 mount -t ext4 /dev/block/mmcblk0p2 /sdext
 
-mount -t ext4 -o loop,ro /sdext/system.img /system
-mount -t ext4 -o loop /sdext/data.img /data
+mount -t vfat -o ro /dev/block/stl4 /efs
 
-sed -i "s|g3_mount_stl6|# derp|" /init.rc
-sed -i "s|g3_mount_stl6|# derp|" /recovery.rc
-sed -i "s|g3_mount_stl8|# derp|" /init.rc /recovery.rc
-
-#sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
-#sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
-#sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/stl8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
+sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
+sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
+sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/stl8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
 
 umount /kyora_sd
 rm -rf /kyora_sd

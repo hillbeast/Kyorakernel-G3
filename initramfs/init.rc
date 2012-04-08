@@ -108,10 +108,10 @@ loglevel 3
 
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    # g3_mount_stl6
+    g3_mount_stl6
 
     # We chown/chmod /data again so because mount is run as root + defaults
-    # g3_mount_stl7
+    g3_mount_stl7
 
 
     chown system system /data
@@ -139,7 +139,7 @@ loglevel 3
     write /proc/apanic_console 1
 
     # Same reason as /data above
-    # g3_mount_stl8
+    g3_mount_stl8
     chown system cache /cache
     chmod 0770 /cache
 
@@ -150,7 +150,7 @@ loglevel 3
     # We chown/chmod /efs again so because mount is run as root + defaults
     
     # symlink /data/efs /efs
-    # mount rfs /dev/block/stl4 /efs nosuid nodev check=no
+    mount vfat /dev/block/stl4 /efs ro nosuid nodev check=no
     chown radio radio /efs
     chmod 0771 /efs
 
