@@ -58,9 +58,6 @@ struct vm_area_struct;
 #else
 #define __GFP_NOTRACK	((__force gfp_t)0)
 #endif
-#define ___GFP_NO_KSWAPD        0x400000u
-#define ___GFP_OTHER_NODE       0x800000u
-#define ___GFP_WRITE            0x1000000u
 
 /*
  * This may seem redundant, but it's a way of annotating false positives vs.

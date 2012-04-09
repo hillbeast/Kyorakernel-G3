@@ -13,7 +13,7 @@ config TINY_FSR
 config TINY_FLASH_PHYS_ADDR
         hex "Flex-OneNAND flash Physical Location"
         depends on TINY_FSR
-        default "0xB0000000"
+        default "0x00100000"
         help
           This is the physical address in your flash memory the fsr will
           be linked for and stored to.  This address is dependent on your

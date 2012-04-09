@@ -253,7 +253,7 @@ static int s3c_bat_get_adc_data(adc_channel_type adc_ch)
 	dev_dbg(dev, "%s: adc_max = %d, adc_min = %d\n",
 			__func__, adc_max, adc_min);
 	return (adc_total - adc_max - adc_min) / (ADC_DATA_ARR_SIZE - 2);
-};
+}
 
 
 static unsigned long s3c_read_temp(struct power_supply *bat_ps)
@@ -890,7 +890,7 @@ static int s3c_get_bat_temp(struct power_supply *bat_ps)
 	int temp_adc = s3c_read_temp(bat_ps);
 	if(temp_adc < 0)
 	{
-		// commented by hb printk("%s: Read temp ADC failed!!\n", __func__);
+		printk("%s: Read temp ADC failed!!\n", __func__);
 		return -EINVAL;
 	}
 

@@ -455,7 +455,7 @@ TRACE_EVENT(block_split,
 		  __entry->comm)
 );
 
-TRACE_EVENT(block_bio_remap,
+TRACE_EVENT(block_remap,
 
 	TP_PROTO(struct request_queue *q, struct bio *bio, dev_t dev,
 		 sector_t from),
