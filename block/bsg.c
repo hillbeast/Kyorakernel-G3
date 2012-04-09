@@ -15,11 +15,12 @@
 #include <linux/blkdev.h>
 #include <linux/poll.h>
 #include <linux/cdev.h>
+#include <linux/jiffies.h>
 #include <linux/percpu.h>
 #include <linux/uio.h>
 #include <linux/idr.h>
 #include <linux/bsg.h>
-#include <linux/smp_lock.h>
+#include <linux/slab.h>
 
 #include <scsi/scsi.h>
 #include <scsi/scsi_ioctl.h>
@@ -181,7 +182,7 @@ static int blk_fill_sgv4_hdr_rq(struct request_queue *q, struct request *rq,
 			return -ENOMEM;
 	}
 
-	if (copy_from_user(rq->cmd, (void *)(unsigned long)hdr->request,
+	if (copy_from_user(rq->cmd, (void __user *)(unsigned long)hdr->request,
 			   hdr->request_len))
 		return -EFAULT;
 
@@ -197,7 +198,7 @@ static int blk_fill_sgv4_hdr_rq(struct request_queue *q, struct request *rq,
 	rq->cmd_len = hdr->request_len;
 	rq->cmd_type = REQ_TYPE_BLOCK_PC;
 
-	rq->timeout = (hdr->timeout * HZ) / 1000;
+	rq->timeout = msecs_to_jiffies(hdr->timeout);
 	if (!rq->timeout)
 		rq->timeout = q->sg_timeout;
 	if (!rq->timeout)
@@ -248,7 +249,15 @@ bsg_map_hdr(struct bsg_device *bd, struct sg_io_v4 *hdr, fmode_t has_write_perm,
 	struct request *rq, *next_rq = NULL;
 	int ret, rw;
 	unsigned int dxfer_len;
-	void *dxferp = NULL;
+	void __user *dxferp = NULL;
+	struct bsg_class_device *bcd = &q->bsg_dev;
+
+	/* if the LLD has been removed then the bsg_unregister_queue will
+	 * eventually be called and the class_dev was freed, so we can no
+	 * longer use this request_queue. Return no such address.
+	 */
+	if (!bcd->class_dev)
+		return ERR_PTR(-ENXIO);
 
 	dprintk("map hdr %llx/%u %llx/%u\n", (unsigned long long) hdr->dout_xferp,
 		hdr->dout_xfer_len, (unsigned long long) hdr->din_xferp,
@@ -259,7 +268,7 @@ bsg_map_hdr(struct bsg_device *bd, struct sg_io_v4 *hdr, fmode_t has_write_perm,
 		return ERR_PTR(ret);
 
 	/*
-	 * map scatter-gather elements seperately and string them to request
+	 * map scatter-gather elements separately and string them to request
 	 */
 	rq = blk_get_request(q, rw, GFP_KERNEL);
 	if (!rq)
@@ -282,7 +291,7 @@ bsg_map_hdr(struct bsg_device *bd, struct sg_io_v4 *hdr, fmode_t has_write_perm,
 		rq->next_rq = next_rq;
 		next_rq->cmd_type = rq->cmd_type;
 
-		dxferp = (void*)(unsigned long)hdr->din_xferp;
+		dxferp = (void __user *)(unsigned long)hdr->din_xferp;
 		ret =  blk_rq_map_user(q, next_rq, NULL, dxferp,
 				       hdr->din_xfer_len, GFP_KERNEL);
 		if (ret)
@@ -291,10 +300,10 @@ bsg_map_hdr(struct bsg_device *bd, struct sg_io_v4 *hdr, fmode_t has_write_perm,
 
 	if (hdr->dout_xfer_len) {
 		dxfer_len = hdr->dout_xfer_len;
-		dxferp = (void*)(unsigned long)hdr->dout_xferp;
+		dxferp = (void __user *)(unsigned long)hdr->dout_xferp;
 	} else if (hdr->din_xfer_len) {
 		dxfer_len = hdr->din_xfer_len;
-		dxferp = (void*)(unsigned long)hdr->din_xferp;
+		dxferp = (void __user *)(unsigned long)hdr->din_xferp;
 	} else
 		dxfer_len = 0;
 
@@ -424,7 +433,7 @@ static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
 	/*
 	 * fill in all the output members
 	 */
-	hdr->device_status = status_byte(rq->errors);
+	hdr->device_status = rq->errors & 0xff;
 	hdr->transport_status = host_byte(rq->errors);
 	hdr->driver_status = driver_byte(rq->errors);
 	hdr->info = 0;
@@ -436,7 +445,7 @@ static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
 		int len = min_t(unsigned int, hdr->max_response_len,
 					rq->sense_len);
 
-		ret = copy_to_user((void*)(unsigned long)hdr->response,
+		ret = copy_to_user((void __user *)(unsigned long)hdr->response,
 				   rq->sense, len);
 		if (!ret)
 			hdr->response_len = len;
@@ -597,7 +606,7 @@ bsg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
 	ret = __bsg_read(buf, count, bd, NULL, &bytes_read);
 	*ppos = bytes_read;
 
-	if (!bytes_read || (bytes_read && err_block_err(ret)))
+	if (!bytes_read || err_block_err(ret))
 		bytes_read = ret;
 
 	return bytes_read;
@@ -677,7 +686,7 @@ bsg_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
 	/*
 	 * return bytes written on non-fatal errors
 	 */
-	if (!bytes_written || (bytes_written && err_block_err(ret)))
+	if (!bytes_written || err_block_err(ret))
 		bytes_written = ret;
 
 	dprintk("%s: returning %Zd\n", bd->name, bytes_written);
@@ -760,12 +769,10 @@ static struct bsg_device *bsg_add_device(struct inode *inode,
 					 struct file *file)
 {
 	struct bsg_device *bd;
-	int ret;
 #ifdef BSG_DEBUG
 	unsigned char buf[32];
 #endif
-	ret = blk_get_queue(rq);
-	if (ret)
+	if (!blk_get_queue(rq))
 		return ERR_PTR(-ENXIO);
 
 	bd = bsg_alloc_device();
@@ -841,9 +848,7 @@ static int bsg_open(struct inode *inode, struct file *file)
 {
 	struct bsg_device *bd;
 
-	lock_kernel();
 	bd = bsg_get_device(inode, file);
-	unlock_kernel();
 
 	if (IS_ERR(bd))
 		return PTR_ERR(bd);
@@ -871,7 +876,7 @@ static unsigned int bsg_poll(struct file *file, poll_table *wait)
 	spin_lock_irq(&bd->lock);
 	if (!list_empty(&bd->done_list))
 		mask |= POLLIN | POLLRDNORM;
-	if (bd->queued_cmds >= bd->max_queue)
+	if (bd->queued_cmds < bd->max_queue)
 		mask |= POLLOUT;
 	spin_unlock_irq(&bd->lock);
 
@@ -966,6 +971,7 @@ static const struct file_operations bsg_fops = {
 	.release	=	bsg_release,
 	.unlocked_ioctl	=	bsg_ioctl,
 	.owner		=	THIS_MODULE,
+	.llseek		=	default_llseek,
 };
 
 void bsg_unregister_queue(struct request_queue *q)
@@ -977,7 +983,8 @@ void bsg_unregister_queue(struct request_queue *q)
 
 	mutex_lock(&bsg_mutex);
 	idr_remove(&bsg_minor_idr, bcd->minor);
-	sysfs_remove_link(&q->kobj, "bsg");
+	if (q->kobj.sd)
+		sysfs_remove_link(&q->kobj, "bsg");
 	device_unregister(bcd->class_dev);
 	bcd->class_dev = NULL;
 	kref_put(&bcd->ref, bsg_kref_release_function);
@@ -1062,7 +1069,7 @@ EXPORT_SYMBOL_GPL(bsg_register_queue);
 
 static struct cdev bsg_cdev;
 
-static char *bsg_devnode(struct device *dev, mode_t *mode)
+static char *bsg_devnode(struct device *dev, umode_t *mode)
 {
 	return kasprintf(GFP_KERNEL, "bsg/%s", dev_name(dev));
 }
