@@ -20,7 +20,6 @@
 #include <linux/mtd/onenand.h>
 #include <linux/mtd/partitions.h>
 #include <asm/io.h>
-#include "onenand_base.c"
 
 /*
  * Note: Driver name and platform data format have been updated!
@@ -150,3 +149,4 @@ module_exit(generic_onenand_exit);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Kyungmin Park <kyungmin.park@samsung.com>");
 MODULE_DESCRIPTION("Glue layer for OneNAND flash on generic boards");
+

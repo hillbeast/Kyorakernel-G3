@@ -890,7 +890,7 @@ static int s3c_get_bat_temp(struct power_supply *bat_ps)
 	int temp_adc = s3c_read_temp(bat_ps);
 	if(temp_adc < 0)
 	{
-		printk("%s: Read temp ADC failed!!\n", __func__);
+		// commented by hb printk("%s: Read temp ADC failed!!\n", __func__);
 		return -EINVAL;
 	}
 

@@ -16,6 +16,7 @@
  */
 
 #include <linux/kernel.h>
+#include <linux/slab.h>
 #include <linux/module.h>
 #include <linux/init.h>
 #include <linux/vmalloc.h>
@@ -560,3 +561,4 @@ module_exit(onenand_sim_exit);
 MODULE_AUTHOR("Kyungmin Park <kyungmin.park@samsung.com>");
 MODULE_DESCRIPTION("The OneNAND flash simulator");
 MODULE_LICENSE("GPL");
+

@@ -251,3 +251,4 @@ int onenand_default_bbt(struct mtd_info *mtd)
 
 EXPORT_SYMBOL(onenand_scan_bbt);
 EXPORT_SYMBOL(onenand_default_bbt);
+
