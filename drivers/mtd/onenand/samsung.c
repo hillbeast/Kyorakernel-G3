@@ -905,7 +905,7 @@ static int s3c_onenand_probe(struct platform_device *pdev)
 		goto ioremap_failed;
 	}
 
-	this->clk = clk_get(&pdev->dev, "onenand");
+	this->clk = clk_get(&pdev->dev, "nandxl");
 
 	if (IS_ERR(this->clk)) {
 		dev_err(&pdev->dev, "cannot get clock\n");
@@ -1131,7 +1131,7 @@ static struct platform_device_id s3c_onenand_driver_ids[] = {
 		.driver_data	= TYPE_S3C6410,
 	}, {
 		.name		= "s5p6442-onenand",
-		.driver_data	= TYPE_S5PC110,
+		.driver_data	= TYPE_S5PC100,
 	}, {
 		.name		= "s5pc100-onenand",
 		.driver_data	= TYPE_S5PC100,

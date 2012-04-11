@@ -73,5 +73,10 @@ config MTD_ONENAND_SIM
 	  The simulator may simulate various OneNAND flash chips for the
 	  OneNAND MTD layer.
 
+config SAMSUNG_DEBUG
+	bool "Samsung Debug Mode"
+	help
+	  Enables Samsung debug. This option might be better elsewhere but this
+	  is where I need it for now.
 endif # MTD_ONENAND
 
