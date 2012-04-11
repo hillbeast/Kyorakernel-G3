@@ -39,7 +39,6 @@ enum soc_type {
 	TYPE_S3C6410,
 	TYPE_S5PC100,
 	TYPE_S5PC110,
-	TYPE_S5P6442,
 };
 
 
@@ -48,15 +47,7 @@ enum soc_type {
 * to allow customization later
 */
 
-#if defined(CONFIG_MACH_P1_LTN)
-#include "samsung_p1.h"
-#elif defined(CONFIG_MACH_P1_CDMA)
-#include "samsung_p1c.h"
-#elif defined(CONFIG_MACH_P1_GSM)
-#include "samsung_p1.h"
-#else
 #include "samsung.h"
-#endif
 
 /* END OF DEVICE SPECIFIC PARTITION LAYOUT */
 
@@ -1042,6 +1033,7 @@ static int s3c_onenand_probe(struct platform_device *pdev)
 		add_mtd_partitions(mtd, pdata->parts, pdata->nr_parts);
 	else
 #endif
+
 		err = add_mtd_device(mtd);
 */
 
@@ -1139,7 +1131,7 @@ static struct platform_device_id s3c_onenand_driver_ids[] = {
 		.driver_data	= TYPE_S3C6410,
 	}, {
 		.name		= "s5p6442-onenand",
-		.driver_data	= TYPE_S3C6410,
+		.driver_data	= TYPE_S5PC110,
 	}, {
 		.name		= "s5pc100-onenand",
 		.driver_data	= TYPE_S5PC100,

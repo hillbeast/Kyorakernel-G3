@@ -39,7 +39,7 @@ build_fs_current()
 {
 	echo 'DO NOT MODIFY THIS FILE, YOUR SYSTEM WOULD NOT BE ABLE TO BOOT' > $G3DIR/fs.current
 	mkdir /g3_mnt
-	for DEVICE in mmcblk0p2 tfsr6 tfsr7 tfsr8
+	for DEVICE in mmcblk0p2 stl6 stl7 stl8
 	do
 		mount -o ro /dev/block/${DEVICE} /g3_mnt
 		mount | awk '/\/g3_mnt/ { print $1 " " $5 }' | awk -F "/" '{ print $4 }' | sed 's/vfat/rfs/' >> $G3DIR/fs.current
@@ -150,9 +150,9 @@ esac
 }
 
 get_filesystems() {
-	STL6_FS=`grep tfsr6 $G3DIR/fs.current | awk '{ print $2 }'`
-	STL7_FS=`grep tfsr7 $G3DIR/fs.current | awk '{ print $2 }'`
-	STL8_FS=`grep tfsr8 $G3DIR/fs.current | awk '{ print $2 }'`
+	STL6_FS=`grep stl6 $G3DIR/fs.current | awk '{ print $2 }'`
+	STL7_FS=`grep stl7 $G3DIR/fs.current | awk '{ print $2 }'`
+	STL8_FS=`grep stl8 $G3DIR/fs.current | awk '{ print $2 }'`
 	MMC_FS=`grep mmcblk0p2 $G3DIR/fs.current | awk '{ print $2 }'`
 }
 
@@ -269,7 +269,7 @@ insmod /lib/modules/rfs_glue.ko
 insmod /lib/modules/rfs_fat.ko
 
 echo "fsck filesystems"
-for DEVICE in tfsr7 tfsr8 tfsr6 mmcblk0p2 
+for DEVICE in stl7 stl8 stl6 mmcblk0p2 
 do
 	case `grep ${DEVICE} $G3DIR/fs.current | awk '{ print $2 }'` in
 jfs)
@@ -290,7 +290,7 @@ done
 umount /sdcard /cache /system /data
 
 #fsck filesystems
-for DEVICE in mmcblk0p2 tfsr6 tfsr7 tfsr8
+for DEVICE in mmcblk0p2 stl6 stl7 stl8
 do
 	echo "Checking ${DEVICE}" >>/tmp/kernel.log
 	case `grep ${DEVICE} $G3DIR/fs.current | awk '{ print $2 }'` in
@@ -405,17 +405,17 @@ get_filesystems
 
 if test -f $G3DIR/fs.options
 then
-	STL6_MNT=",`grep tfsr6 $G3DIR/fs.options | awk '{ print $2 }'`"
-	STL7_MNT=",`grep tfsr7 $G3DIR/fs.options | awk '{ print $2 }'`"
-	STL8_MNT=",`grep tfsr8 $G3DIR/fs.options | awk '{ print $2 }'`"
+	STL6_MNT=",`grep stl6 $G3DIR/fs.options | awk '{ print $2 }'`"
+	STL7_MNT=",`grep stl7 $G3DIR/fs.options | awk '{ print $2 }'`"
+	STL8_MNT=",`grep stl8 $G3DIR/fs.options | awk '{ print $2 }'`"
 	MMC_MNT=",`grep mmcblk0p2 $G3DIR/fs.options | awk '{ print $2 }'`"
 else
 	set_mount_options
 fi
 	
-echo "TFSR6 :" $STL6_FS
-echo "TFSR7 :" $STL7_FS
-echo "TFSR8 :" $STL8_FS
+echo "STL6 :" $STL6_FS
+echo "STL7 :" $STL7_FS
+echo "STL8 :" $STL8_FS
 echo "MMC : " $MMC_FS
 
 sed -i "s|SYSTEM_FS|$STL6_FS|" /misc/recovery.fstab
@@ -427,7 +427,7 @@ rm -rf /etc
 sync
 cd /
 
-mount -t $STL6_FS -o nodev,noatime,nodiratime,ro /dev/block/tfsr6 /system
+mount -t $STL6_FS -o nodev,noatime,nodiratime,ro /dev/block/stl6 /system
 
 # DATA2SD CODE
 mkdir /data
@@ -617,9 +617,9 @@ mount -t ext4 /dev/block/mmcblk0p2 /sdext
 
 mount -t vfat -o ro /dev/block/stl4 /efs
 
-sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/tfsr6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
-sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/tfsr6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
-sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/tfsr8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
+sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
+sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
+sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/stl8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
 
 umount /kyora_sd
 rm -rf /kyora_sd
