@@ -782,7 +782,6 @@ void __init s5p64xx_register_clocks(void)
 	clkp = init_clocks_disable;
 	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks_disable); ptr++, clkp++) {
 		ret = s3c24xx_register_clock(clkp);
-		printk(KERN_INFO "clk registered BUT DISABLED: %s | Parent: %s\n", clkp->name, clkp->parent->name);
 		if (ret < 0) {
 			printk(KERN_ERR "Failed to register clock %s (%d)\n", clkp->name, ret);
 		}

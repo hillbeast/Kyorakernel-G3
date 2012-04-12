@@ -563,6 +563,23 @@ static struct clk_sources clkset_lcd = {
     .nr_sources = ARRAY_SIZE(clkset_lcd_list),
 };
 
+static struct clk *clkset_onenand_list[] = {
+    NULL,
+    NULL,
+    NULL,
+    &clk_srclk, /*XusbXTI*/
+    NULL,
+    NULL,
+    &clk_mout_mpll.clk,
+    &clk_mout_epll.clk,
+    &clk_mout_vpll.clk,
+};
+
+static struct clk_sources clkset_onenand = {
+    .sources    = clkset_onenand_list,
+    .nr_sources = ARRAY_SIZE(clkset_onenand_list),
+};
+
 static struct clk *clkset_cam0_list[] = {
 	NULL,
 	NULL,
@@ -1257,6 +1274,26 @@ static struct clksrc_clk clk_fimc2 = {
 	.reg_divider	= S5P_CLK_DIV3,
 	.reg_source	= S5P_CLK_SRC3,
 };
+
+static struct clksrc_clk clk_nandxl = {
+	.clk	= {
+		.name		= "sclk_nandxl",
+		.id		= -1,
+		.ctrlbit        = S5P_CLKGATE_SCLK0_NANDXL,
+		.enable		= NULL,
+		.set_parent	= s5p64xx_setparent_clksrc,
+		.get_rate	= s5p64xx_getrate_clksrc,
+		.set_rate	= s5p64xx_setrate_clksrc,
+		.round_rate	= s5p64xx_roundrate_clksrc,
+	},
+	.shift		= S5P_CLKSRC0_ONENAND_SHIFT,
+	.mask		= S5P_CLKSRC0_ONENAND_MASK,
+	.sources	= &clkset_lcd,
+	.divider_shift	= S5P_CLKDIV0_D1CLK_SHIFT,
+	.reg_divider	= S5P_CLK_DIV1,
+	.reg_source	= S5P_CLK_SRC1,
+};
+
 /* Clock initialisation code */
 
 static struct clksrc_clk *init_parents[] = {
@@ -1287,6 +1324,7 @@ static struct clksrc_clk *init_parents[] = {
 	&clk_i2s,
 	&clk_audss_hclk, // 091014 Univ6442 Sound (beta3) 
         &clk_i2smain,    // 091014 Univ6442 Sound (beta3)     
+	&clk_nandxl,
 };
 
 static void __init_or_cpufreq s5p6442_set_clksrc(struct clksrc_clk *clk)
@@ -1525,6 +1563,7 @@ static struct clk *clks[] __initdata = {
 	&clk_i2s_XXTI,
 	&clk_clk_out.clk,
 	&clk_oscclk,
+	&clk_nandxl.clk,
 };
 
 void __init s5p6442_register_clocks(void)
