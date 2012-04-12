@@ -1,8 +1,8 @@
-/* This file is auto generated, version Test-Preempt-031 */
+/* This file is auto generated, version Test-Preempt-032 */
 /*  PREEMPT */
 #define UTS_MACHINE "arm"
-#define UTS_VERSION "Kyorakernel_#Test-Preempt-031 PREEMPT Wed Apr 11 15:27:16 NZST 2"
-#define LINUX_COMPILE_TIME "15:27:16"
+#define UTS_VERSION "Kyorakernel_#Test-Preempt-032 PREEMPT Thu Apr 12 00:48:31 NZST 2"
+#define LINUX_COMPILE_TIME "00:48:31"
 #define LINUX_COMPILE_BY "root"
 #define LINUX_COMPILE_HOST "hillbeast-virtual-machine"
 #define LINUX_COMPILE_DOMAIN

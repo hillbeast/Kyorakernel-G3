@@ -105,7 +105,7 @@ static int bml_transfer(u32 volume, u32 partno, const struct request *req)
 			return -EIO;
 		}
 	}
-
+	printk("sector: %d spp_mask:%d nsect:%d req:%d\n", sector, spp_mask, nsect, rq_data_dir(req));
 	switch (rq_data_dir(req)) 
 	{
 		case READ:
@@ -127,6 +127,7 @@ static int bml_transfer(u32 volume, u32 partno, const struct request *req)
 			break;
 		default:
 			ERRPRINTK("Unknown request 0x%x\n", (u32) rq_data_dir(req));
+			//printk("Sector: %d spp_mask:%d nsect:%d req:%d || (sector & spp_mask):%d\n", sector, spp_mask, nsect, req, (sector & spp_mask));
 			return -EINVAL;
 	}
 
