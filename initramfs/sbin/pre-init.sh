@@ -156,7 +156,6 @@ get_filesystems() {
 	MMC_FS=`grep mmcblk0p2 $G3DIR/fs.current | awk '{ print $2 }'`
 }
 
-export PATH=/sbin:/system/sbin:/system/bin:/system/xbin
 export LD_LIBRARY_PATH=/system/lib
 export ANDROID_BOOTLOGO=1
 export ANDROID_ROOT=/system
@@ -168,7 +167,7 @@ export BOOTCLASSPATH=/system/framework/core.jar:/system/framework/ext.jar:/syste
 
 export TMPDIR=/data/local/tmp
 
-/sbin/busybox sh /sbin/initbbox.sh
+#/sbin/busybox sh /sbin/initbbox.sh
 
 uname -a
 
@@ -220,6 +219,9 @@ mknod /dev/block/bml9 b 137 9
 mknod /dev/block/bml10 b 137 10
 mknod /dev/block/bml11 b 137 11
 mknod /dev/block/bml12 b 137 12
+mknod /dev/tty0 c 4 0
+
+dmesg > /dev/tty0
 
 insmod /lib/modules/param.ko
 # insmod /lib/modules/logger.ko
