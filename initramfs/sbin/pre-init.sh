@@ -174,18 +174,6 @@ uname -a
 insmod /lib/modules/fsr.ko
 insmod /lib/modules/fsr_stl.ko
 
-mkdir /proc
-mkdir /sys
-
-mount -t proc proc /proc
-mount -t sysfs sys /sys
-
-# standard
-mkdir /dev
-mknod /dev/null c 1 3
-mknod /dev/zero c 1 5
-mknod /dev/urandom c 1 9
-
 # internal & external SD
 mkdir /dev/block
 mknod /dev/block/mmcblk0 b 179 0
@@ -219,9 +207,6 @@ mknod /dev/block/bml9 b 137 9
 mknod /dev/block/bml10 b 137 10
 mknod /dev/block/bml11 b 137 11
 mknod /dev/block/bml12 b 137 12
-mknod /dev/tty0 c 4 0
-
-dmesg > /dev/tty0
 
 insmod /lib/modules/param.ko
 # insmod /lib/modules/logger.ko
