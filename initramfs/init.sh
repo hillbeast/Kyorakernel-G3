@@ -2,6 +2,9 @@
 
 export PATH=/sbin:/system/sbin:/system/bin:/system/xbin
 
+insmod /lib/modules/fsr.ko
+insmod /lib/modules/fsr_stl.ko
+
 mount -t proc proc /proc
 mount -t sysfs sys /sys
 

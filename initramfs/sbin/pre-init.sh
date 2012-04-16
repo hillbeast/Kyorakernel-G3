@@ -171,9 +171,6 @@ export TMPDIR=/data/local/tmp
 
 uname -a
 
-insmod /lib/modules/fsr.ko
-insmod /lib/modules/fsr_stl.ko
-
 # internal & external SD
 mkdir /dev/block
 mknod /dev/block/mmcblk0 b 179 0
@@ -209,7 +206,6 @@ mknod /dev/block/bml11 b 137 11
 mknod /dev/block/bml12 b 137 12
 
 insmod /lib/modules/param.ko
-# insmod /lib/modules/logger.ko
 
 mkdir /system
 
@@ -245,9 +241,6 @@ then
 
 fi
 
-
-# if mounting system fails this will allow adb to run
-mkdir /system/bin
 
 echo "Build fs_current"
 build_fs_current
@@ -602,8 +595,6 @@ fi
 
 mount -t ext4 /dev/block/mmcblk0p2 /sdext
 
-mount -t vfat -o ro /dev/block/stl4 /efs
-
 sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
 sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
 sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/stl8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
@@ -624,9 +615,10 @@ sed -i "s|g3_vibrator_module|vibrator-sam|" /init.rc
 mkdir /system/bin
 ln -s /sbin/busybox /system/bin/sh
 
-mkdir /mnt
-mkdir /mnt/sdcard
-mount -t vfat /dev/block/mmcblk0p1 /mnt/sdcard
+mkdir /efs
+mount -t vfat -o ro /dev/block/stl4 /efs
+
+df
 
 exec /init.bin
 

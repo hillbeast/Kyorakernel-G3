@@ -35,12 +35,7 @@ loglevel 3
      setprop wifi.interface "eth0"
 # end of wifi
 
-    insmod /lib/modules/fsr.ko
-    insmod /lib/modules/fsr_stl.ko
-
 # install dpram, multipdp module
-#    insmod /lib/modules/dpram.ko
-#    insmod /lib/modules/multipdp.ko
     insmod /lib/modules/onedram.ko
     insmod /lib/modules/svnet.ko
     insmod /lib/modules/modemctl.ko
@@ -53,9 +48,6 @@ loglevel 3
 # for fmradio
     insmod /lib/modules/Si4709_driver.ko
 
-    mkdir /system
-    mkdir /efs
-    mkdir /data 0771 system system
     mkdir /cache 0770 system cache
     mkdir /config 0500 root root
 
@@ -72,8 +64,6 @@ loglevel 3
     # Secure container public mount points.
     mkdir /mnt/asec  0700 root system
     mount tmpfs tmpfs /mnt/asec mode=0755,gid=1000
-
-    mount rootfs rootfs / ro remount
 
     write /proc/sys/kernel/panic_on_oops 1
     write /proc/sys/kernel/hung_task_timeout_secs 0
@@ -108,10 +98,10 @@ loglevel 3
 
 # mount mtd partitions
     # Mount /system rw first to give the filesystem a chance to save a checkpoint
-    g3_mount_stl6
+    # g3_mount_stl6
 
     # We chown/chmod /data again so because mount is run as root + defaults
-    g3_mount_stl7
+    # g3_mount_stl7
 
 
     chown system system /data
@@ -150,7 +140,7 @@ loglevel 3
     # We chown/chmod /efs again so because mount is run as root + defaults
     
     # symlink /data/efs /efs
-    mount vfat /dev/block/stl4 /efs ro nosuid nodev check=no
+    mount rfs /dev/block/stl4 /efs ro nosuid nodev check=no
     chown radio radio /efs
     chmod 0771 /efs
 
