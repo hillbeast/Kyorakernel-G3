@@ -84,49 +84,11 @@ struct onenand_info {
 	struct mtd_partition		*parts;
 	struct onenand_chip		onenand;
 };
+/* START OF DEVICE SPECIFIC PARTITION LAYOUT */
 
-struct mtd_partition s3c_partition_info[] = {
-	{
-		.name		= "bootloader",
-		.offset		= (0),          /* for bootloader */
-		.size			= (512*SZ_1K),
-		.mask_flags	= MTD_CAP_NANDFLASH,
-	},
-	{
-		.name		= "param",
-		.offset		= MTDPART_OFS_APPEND,
-		.size			= (1*SZ_1M),
-		//.mask_flags	= MTD_CAP_NANDFLASH,
-	},
-	{
-		.name		= "kernel",
-		.offset		= MTDPART_OFS_APPEND,
-		.size			=(6*SZ_1M),
-	},
-//	{
-//		.name		= "ramdisk",
-//		.offset		= MTDPART_OFS_APPEND,
-//		.size		= (3*SZ_1M),
-//	},
-	{
-		.name		= "system",
-		.offset		= MTDPART_OFS_APPEND,
-		.size			= (100*SZ_1M),
-	},
-	{
-		.name		= "cache",
-		.offset		= MTDPART_OFS_APPEND,
-		.size			= (80*SZ_1M),
-		//.size		= (200*SZ_1M),		// iozone test
-	},
-	{
-		.name		= "userdata",
-		.offset		= MTDPART_OFS_APPEND,
-		.size			= (50*SZ_1M),
-//		.size               = MTDPART_SIZ_FULL,
-	}
+#include "samsung_apollo.h"
 
-};
+/* END OF DEVICE SPECIFIC PARTITION LAYOUT */
 
 /* Default Flex-OneNAND boundary and lock respectively */
 static int flex_bdry[MAX_DIES * 2] = { -1, 0, -1, 0 };
@@ -4334,3 +4296,4 @@ MODULE_ALIAS(DRIVER_NAME);
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("DongJin Park <djpax.park@samsung.com>");
 MODULE_DESCRIPTION("Glue layer for OneNAND flash on S5P6442");
+

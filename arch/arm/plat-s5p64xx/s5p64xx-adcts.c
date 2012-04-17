@@ -306,7 +306,7 @@ int s3c_adc_get_adc_data(int channel)
 
 	if (i==ADC_RETRY_NUM)
 	{
-		printk ("%s: wait_event timeout\n",__func__);
+		// commented by hb printk ("%s: wait_event timeout\n",__func__);
 		return -EINVAL;
 	}
 

@@ -233,7 +233,7 @@ static int s3c_bat_get_adc_data(adc_channel_type adc_ch)
 		adc_arr[i] = s3c_adc_get_adc_data(adc_ch);
 		if(adc_arr[i] < 0)
 		{
-			printk("%s: ADC driver is unavailable (CH : %d)\n", __func__, adc_ch);
+			// commented by hb printk("%s: ADC driver is unavailable (CH : %d)\n", __func__, adc_ch);
 			return -1;
 		}
 
@@ -528,7 +528,7 @@ static unsigned long s3c_read_bat(struct power_supply *bat_ps)
 	chg_adc = s3c_bat_get_adc_data(S3C_ADC_CHG_CURRENT);
 	if(adc < 0 || chg_adc < 0)
 	{
-		printk("%s: ADC value is invalid!!\n", __func__);
+		// commented by hb printk("%s: ADC value is invalid!!\n", __func__);
 		return -1;
 	}
 
@@ -581,7 +581,7 @@ static int s3c_get_bat_level(struct power_supply *bat_ps)
 	int bat_vol = s3c_read_bat(bat_ps);
 	if(bat_vol < 0)
 	{
-		printk("%s: Read battery ADC failed!!\n", __func__);
+		// commented by hb printk("%s: Read battery ADC failed!!\n", __func__);
 		return -1;
 	}
 	
@@ -890,7 +890,7 @@ static int s3c_get_bat_temp(struct power_supply *bat_ps)
 	int temp_adc = s3c_read_temp(bat_ps);
 	if(temp_adc < 0)
 	{
-		printk("%s: Read temp ADC failed!!\n", __func__);
+		// commented by hb printk("%s: Read temp ADC failed!!\n", __func__);
 		return -EINVAL;
 	}
 
@@ -1813,7 +1813,7 @@ static void s3c_bat_status_update(struct power_supply *bat_ps)
 	level_val = s3c_get_bat_level(bat_ps);
 	if(temp_val == -EINVAL || level_val < 0)  // if adc read fails, then skip battery status update
 	{
-		printk("%s: ADC value is invalid, skip update!! (temp:%d, vol:%d)\n", __func__, temp_val, level_val);
+		// commented by hb printk("%s: ADC value is invalid, skip update!! (temp:%d, vol:%d)\n", __func__, temp_val, level_val);
 		mutex_unlock(&work_lock);
 		return ;
 	}

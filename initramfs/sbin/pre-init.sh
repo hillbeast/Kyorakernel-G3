@@ -156,7 +156,6 @@ get_filesystems() {
 	MMC_FS=`grep mmcblk0p2 $G3DIR/fs.current | awk '{ print $2 }'`
 }
 
-export PATH=/sbin:/system/sbin:/system/bin:/system/xbin
 export LD_LIBRARY_PATH=/system/lib
 export ANDROID_BOOTLOGO=1
 export ANDROID_ROOT=/system
@@ -168,24 +167,9 @@ export BOOTCLASSPATH=/system/framework/core.jar:/system/framework/ext.jar:/syste
 
 export TMPDIR=/data/local/tmp
 
-/sbin/busybox sh /sbin/initbbox.sh
+#/sbin/busybox sh /sbin/initbbox.sh
 
 uname -a
-
-insmod /lib/modules/fsr.ko
-insmod /lib/modules/fsr_stl.ko
-
-mkdir /proc
-mkdir /sys
-
-mount -t proc proc /proc
-mount -t sysfs sys /sys
-
-# standard
-mkdir /dev
-mknod /dev/null c 1 3
-mknod /dev/zero c 1 5
-mknod /dev/urandom c 1 9
 
 # internal & external SD
 mkdir /dev/block
@@ -222,7 +206,6 @@ mknod /dev/block/bml11 b 137 11
 mknod /dev/block/bml12 b 137 12
 
 insmod /lib/modules/param.ko
-# insmod /lib/modules/logger.ko
 
 mkdir /system
 
@@ -258,9 +241,6 @@ then
 
 fi
 
-
-# if mounting system fails this will allow adb to run
-mkdir /system/bin
 
 echo "Build fs_current"
 build_fs_current
@@ -612,6 +592,9 @@ else
 fi
 
 # Inline inject mountpoints
+
+mount -t ext4 /dev/block/mmcblk0p2 /sdext
+
 sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime ro ${STL6_MNT}|" /init.rc
 sed -i "s|g3_mount_stl6|mount ${STL6_FS} /dev/block/stl6 /system nodev noatime nodiratime rw ${STL6_MNT}|" /recovery.rc
 sed -i "s|g3_mount_stl8|mount ${STL8_FS} /dev/block/stl8 /cache sync noexec noatime nodiratime nosuid nodev rw ${STL8_MNT}|" /init.rc /recovery.rc
@@ -631,6 +614,11 @@ sed -i "s|g3_vibrator_module|vibrator-sam|" /init.rc
 
 mkdir /system/bin
 ln -s /sbin/busybox /system/bin/sh
+
+mkdir /efs
+mount -t vfat -o ro /dev/block/stl4 /efs
+
+df
 
 exec /init.bin
 
