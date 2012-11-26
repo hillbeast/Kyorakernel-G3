@@ -108,7 +108,7 @@ struct wm8994_priv {
 	printk (KERN_ERR "[ "SUBJECT " (%s,%d) ] " format "\n", __func__, __LINE__, ## __VA_ARGS__);
 
 // Definitions of function prototype.
-inline unsigned int wm8994_read(struct snd_soc_codec *codec,unsigned int reg);
+unsigned int wm8994_read(struct snd_soc_codec *codec,unsigned int reg);
 int wm8994_write(struct snd_soc_codec *codec, unsigned int reg, unsigned int value);
 int audio_init(void);
 int audio_power(int en);
