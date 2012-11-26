@@ -8,7 +8,7 @@
 ifneq ($(KERNELRELEASE), )
 
 MOD_NAME = Si4709_driver
-obj-m := $(MOD_NAME).o
+obj-y := $(MOD_NAME).o
 
 EXTRA_CFLAGS := -I$(PRJROOT)/modules/include
 

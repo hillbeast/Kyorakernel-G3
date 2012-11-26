@@ -2,7 +2,7 @@
 # Makefile for the vibrator driver ICs with vibrator driver
 #
 
-obj-m += vibrator.o
+obj-y += vibrator.o
 
 vibrator-objs +=tspdrv.o 
 

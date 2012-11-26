@@ -29,9 +29,6 @@
 #ifndef __KERNEL__
 #define __KERNEL__
 #endif
-#ifndef MODULE
-#define MODULE
-#endif
 
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -43,7 +40,7 @@
 #include <linux/platform_device.h>
 #include <asm/uaccess.h>
 #include <linux/hrtimer.h>
-#include "../../drivers/staging/android/timed_output.h"
+#include "../../staging/android/timed_output.h"
 #include <linux/delay.h>
 #include <linux/wakelock.h>
 #include <linux/cpufreq.h>
