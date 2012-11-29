@@ -35,6 +35,10 @@ enum soc_type {
 	TYPE_S5PC110,
 };
 
+#ifdef CONFIG_MACH_APOLLO
+#include "samsung_apollo.h"
+#endif
+
 #define ONENAND_ERASE_STATUS		0x00
 #define ONENAND_MULTI_ERASE_SET		0x01
 #define ONENAND_ERASE_START		0x03
