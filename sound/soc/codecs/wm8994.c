@@ -159,6 +159,45 @@ static const char *audio_path[] = { "Playback Path",
 				"Down Gain",
 				NULL};
 
+static unsigned int wm8994_read_hw(struct snd_soc_codec *codec, u16 reg)
+{
+	struct i2c_msg xfer[2];
+	u16 data;
+	int ret;
+	struct i2c_client *i2c = codec->control_data;
+
+	data = ((reg & 0xff00) >> 8) | ((reg & 0xff) << 8);
+
+	//printk("wm8994 read from i2c  reg %x, data %x\n",reg,data);
+	
+	/* Write register */
+	xfer[0].addr = i2c->addr;
+	xfer[0].flags = 0;
+	xfer[0].len = 2;  //1
+	//xfer[0].buf = &reg;
+	xfer[0].buf = (void *)&data;
+
+	/* Read data */
+	xfer[1].addr = i2c->addr;
+	xfer[1].flags = I2C_M_RD;
+	xfer[1].len = 2;
+	xfer[1].buf = (u8 *)&data;
+	ret = i2c_transfer(i2c->adapter, xfer, 2);
+	if (ret != 2) {
+		dev_err(codec->dev, "Failed to read 0x%x: %d\n", reg, ret);
+		return 0;
+	}
+	//printk("wm8994 after read  from i2c  reg %x, data %x\n",reg,data);
+
+	return (data >> 8) | ((data & 0xff) << 8);
+}
+
+inline unsigned int wm8994_read(struct snd_soc_codec *codec,
+				       unsigned int reg)
+{
+		return wm8994_read_hw(codec, reg);
+}
+
 /*===================================
 Function
 	wm8994_data_call_hp_switch
@@ -248,39 +287,6 @@ EXPORT_SYMBOL(wm8994_FM_headset_disable);
 EXPORT_SYMBOL(wm8994_FM_headset_enable);
 EXPORT_SYMBOL(wm8994_FM_headset_gain_set);
 
-static unsigned int wm8994_read_hw(struct snd_soc_codec *codec, u16 reg)
-{
-	struct i2c_msg xfer[2];
-	u16 data;
-	int ret;
-	struct i2c_client *i2c = codec->control_data;
-
-	data = ((reg & 0xff00) >> 8) | ((reg & 0xff) << 8);
-
-	//printk("wm8994 read from i2c  reg %x, data %x\n",reg,data);
-	
-	/* Write register */
-	xfer[0].addr = i2c->addr;
-	xfer[0].flags = 0;
-	xfer[0].len = 2;  //1
-	//xfer[0].buf = &reg;
-	xfer[0].buf = (void *)&data;
-
-	/* Read data */
-	xfer[1].addr = i2c->addr;
-	xfer[1].flags = I2C_M_RD;
-	xfer[1].len = 2;
-	xfer[1].buf = (u8 *)&data;
-	ret = i2c_transfer(i2c->adapter, xfer, 2);
-	if (ret != 2) {
-		dev_err(codec->dev, "Failed to read 0x%x: %d\n", reg, ret);
-		return 0;
-	}
-	//printk("wm8994 after read  from i2c  reg %x, data %x\n",reg,data);
-
-	return (data >> 8) | ((data & 0xff) << 8);
-}
-
 /*
  * write to the WM8994 register space
  */
@@ -312,12 +318,6 @@ int wm8994_write(struct snd_soc_codec *codec, unsigned int reg,
 		return ret;
 	return -EIO;
 
-}
-
-inline unsigned int wm8994_read(struct snd_soc_codec *codec,
-				       unsigned int reg)
-{
-		return wm8994_read_hw(codec, reg);
 }
 
 static const DECLARE_TLV_DB_SCALE(dac_tlv, -12750, 50, 1);

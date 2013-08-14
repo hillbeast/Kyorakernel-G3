@@ -13,7 +13,7 @@ else
 fi
 
 echo "Compiling the kernel"
-make -j2 CROSS_COMPILE=/home/hillbeast/CodeSourcery/Sourcery_G++_Lite/bin/arm-none-eabi-
+make -j2 CROSS_COMPILE=/usr/local/arm-eabi-4.6/bin/arm-eabi-
 
 echo "Tarballing the kernel"
 cp arch/arm/boot/zImage ./

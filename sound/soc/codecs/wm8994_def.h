@@ -14,7 +14,6 @@ struct wm8994_setup_data {
 extern struct snd_soc_dai wm8994_dai;
 extern struct snd_soc_codec_device soc_codec_dev_wm8994;
 
-inline unsigned int wm8994_read(struct snd_soc_codec *codec,unsigned int reg);
 int wm8994_write(struct snd_soc_codec *codec, unsigned int reg,	unsigned int value);
 
 void wm8994_playback_route_headset(struct snd_soc_codec *codec);
